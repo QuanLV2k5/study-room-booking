@@ -1,18 +1,46 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import {
+    useEffect,
+} from 'react';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import {
+    Stack,
+} from 'expo-router';
 
-SplashScreen.preventAutoHideAsync();
+import {
+    configureNotificationHandler,
+} from '@/utils/notifications';
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
-  );
+export default function RootLayout() {
+    useEffect(() => {
+        configureNotificationHandler();
+    }, []);
+
+    return (
+        <Stack>
+            <Stack.Screen
+                name="(tabs)"
+                options={{
+                    headerShown: false,
+                }}
+            />
+
+            <Stack.Screen
+                name="room/[id]"
+                options={{
+                    title: 'Chi tiết phòng',
+                    headerBackTitle:
+                        'Quay lại',
+                }}
+            />
+
+            <Stack.Screen
+                name="scanner"
+                options={{
+                    title: 'Quét QR check-in',
+                    headerBackTitle:
+                        'Quay lại',
+                }}
+            />
+        </Stack>
+    );
 }
