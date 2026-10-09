@@ -1,4 +1,5 @@
 export type Building = 'A' | 'B' | 'C' | 'V';
+export type Campus = 'K' | 'V';
 
 export type Equipment =
     | 'projector'
@@ -10,6 +11,7 @@ export interface Room {
     id: string;
     name: string;
     building: Building;
+    campus: Campus;
     floor: number;
     capacity: number;
     equipments: Equipment[];

@@ -1,11 +1,13 @@
 import {
+    useCallback,
     useMemo,
     useState,
 } from 'react';
+import { Image } from 'expo-image';
+import { getRoomLocation } from '@/utils/rooms';
 
 import {
     Alert,
-    Image,
     ScrollView,
     StyleSheet,
     Text,
@@ -123,16 +125,6 @@ export default function RoomDetailScreen() {
         setShowPass,
     ] = useState(false);
 
-    if (!room) {
-        return (
-            <View style={styles.center}>
-                <Text>
-                    Không tìm thấy phòng.
-                </Text>
-            </View>
-        );
-    }
-
     const slotIsPast = (
         slotId: string,
     ) => {
@@ -187,7 +179,8 @@ export default function RoomDetailScreen() {
     };
 
     const handleBooking =
-        async () => {
+        useCallback(async () => {
+            if (!room) return;
             if (!selectedSlotId) {
                 Alert.alert(
                     'Chưa chọn khung giờ',
@@ -287,7 +280,15 @@ export default function RoomDetailScreen() {
             setSelectedSlotId(
                 null,
             );
-        };
+        }, [room, selectedSlotId, selectedDate, isSlotBooked, user.id, addBooking]);
+
+    if (!room) {
+        return (
+            <View style={styles.center}>
+                <Text>Không tìm thấy phòng.</Text>
+            </View>
+        );
+    }
 
     return (
         <>
@@ -301,10 +302,11 @@ export default function RoomDetailScreen() {
                 }
             >
                 <Image
-                    source={{
-                        uri: room.image,
-                    }}
+                    source={room.image}
                     style={styles.image}
+                    contentFit="cover"
+                    cachePolicy="memory-disk"
+                    transition={0}
                 />
 
                 <Text style={styles.title}>
@@ -312,8 +314,7 @@ export default function RoomDetailScreen() {
                 </Text>
 
                 <Text style={styles.location}>
-                    Tòa {room.building} •
-                    Tầng {room.floor}
+                    {getRoomLocation(room)}
                 </Text>
 
                 <View

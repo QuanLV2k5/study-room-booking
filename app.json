@@ -26,6 +26,14 @@
     "plugins": [
       "expo-router",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "StudyRoom chọn ảnh Booking Pass để đọc mã QR và check-in phòng.",
+          "cameraPermission": "StudyRoom sử dụng camera để quét mã QR Booking Pass.",
+          "microphonePermission": false
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#208AEF",

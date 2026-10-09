@@ -22,29 +22,38 @@ export const isRoomOccupiedNow = (
   bookings: Booking[],
   currentDate = new Date(),
 ) => {
+  return getOccupiedRoomIds(bookings, currentDate).has(roomId);
+};
+
+// Scan bookings once per update, rather than once for every visible room.
+export const getOccupiedRoomIds = (
+  bookings: readonly Booking[],
+  currentDate = new Date(),
+): Set<string> => {
   const today = getDateKey(currentDate);
 
   const currentMinutes = currentDate.getHours() * 60 + currentDate.getMinutes();
 
-  return bookings.some((booking) => {
+  const occupied = new Set<string>();
+  const activeSlots = new Set(
+    TIME_SLOTS.filter((slot) =>
+      currentMinutes >= timeToMinutes(slot.start) &&
+      currentMinutes < timeToMinutes(slot.end),
+    ).map((slot) => slot.id),
+  );
+
+  for (const booking of bookings) {
     if (
-      booking.roomId !== roomId ||
       booking.date !== today ||
       booking.status === "cancelled"
     ) {
-      return false;
+      continue;
     }
 
-    const slot = TIME_SLOTS.find((item) => item.id === booking.slotId);
-
-    if (!slot) {
-      return false;
+    if (activeSlots.has(booking.slotId)) {
+      occupied.add(booking.roomId);
     }
+  }
 
-    const start = timeToMinutes(slot.start);
-
-    const end = timeToMinutes(slot.end);
-
-    return currentMinutes >= start && currentMinutes < end;
-  });
+  return occupied;
 };

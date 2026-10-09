@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
+import { Image } from 'expo-image';
+import { getRoomLocation } from '@/utils/rooms';
 
 import {
-    Image,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -23,7 +24,7 @@ import { Room } from '../types';
 interface Props {
     room: Room;
     occupied: boolean;
-    onPress: () => void;
+    onPress: (roomId: string) => void;
 }
 
 function RoomCard({
@@ -31,24 +32,28 @@ function RoomCard({
     occupied,
     onPress,
 }: Props) {
+    const handlePress = useCallback(() => onPress(room.id), [onPress, room.id]);
     return (
         <TouchableOpacity
             style={styles.card}
             activeOpacity={0.85}
-            onPress={onPress}
+            onPress={handlePress}
+            accessibilityRole="button"
+            accessibilityLabel={`${room.name}, ${getRoomLocation(room)}, ${room.capacity} sinh viên, ${occupied ? 'đang sử dụng' : 'đang trống'}`}
         >
             <Image
-                source={{
-                    uri: room.image,
-                }}
+                source={room.image}
                 style={styles.image}
+                contentFit="cover"
+                cachePolicy="memory-disk"
+                transition={0}
             />
 
             <View style={styles.content}>
                 <View
                     style={styles.header}
                 >
-                    <Text style={styles.name}>
+                    <Text style={styles.name} numberOfLines={1}>
                         {room.name}
                     </Text>
 
@@ -106,8 +111,7 @@ function RoomCard({
                             styles.infoText
                         }
                     >
-                        Tòa {room.building} •
-                        Tầng {room.floor}
+                        {getRoomLocation(room)}
                     </Text>
                 </View>
 
@@ -285,6 +289,7 @@ const styles =
         },
 
         infoText: {
+            flex: 1,
             fontSize: 14,
 
             color:
