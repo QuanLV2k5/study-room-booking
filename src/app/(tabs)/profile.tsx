@@ -1,4 +1,5 @@
 import {
+    ScrollView,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -47,7 +48,7 @@ export default function ProfileScreen() {
             style={styles.container}
             edges={['top']}
         >
-            <View style={styles.content}>
+            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
                 <Text style={styles.title}>
                     Cá nhân
                 </Text>
@@ -73,8 +74,15 @@ export default function ProfileScreen() {
                         <Text style={styles.studentId}>
                             MSSV: {user.studentId}
                         </Text>
+                        {user.email && <Text style={styles.contact} numberOfLines={1}>{user.email}</Text>}
+                        {user.phone && <Text style={styles.contact}>{user.phone}</Text>}
                     </View>
                 </View>
+
+                <TouchableOpacity style={styles.settingsButton} accessibilityRole="button"
+                    activeOpacity={0.85} onPress={() => router.push('/profile-settings')}>
+                    <Text style={styles.settingsButtonText}>Chỉnh sửa hồ sơ</Text>
+                </TouchableOpacity>
 
                 <View style={styles.statsContainer}>
                     <View style={styles.stat}>
@@ -142,7 +150,7 @@ export default function ProfileScreen() {
                         và mã đặt phòng khớp với dữ liệu đã lưu.
                     </Text>
                 </View>
-            </View>
+            </ScrollView>
         </SafeAreaView>
     );
 }
@@ -155,6 +163,24 @@ const styles = StyleSheet.create({
 
     content: {
         padding: 20,
+        paddingBottom: 32,
+    },
+    contact: {
+        marginTop: 5,
+        color: '#DBEAFE',
+        fontSize: 13,
+    },
+    settingsButton: {
+        marginTop: 12,
+        paddingVertical: 14,
+        alignItems: 'center',
+        borderRadius: 14,
+        backgroundColor: COLORS.primaryLight,
+    },
+    settingsButtonText: {
+        color: COLORS.primary,
+        fontSize: 15,
+        fontWeight: '700',
     },
 
     title: {

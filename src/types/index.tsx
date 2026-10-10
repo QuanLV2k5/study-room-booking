@@ -22,6 +22,8 @@ export interface UserSession {
     id: string;
     name: string;
     studentId: string;
+    email?: string;
+    phone?: string;
 }
 
 export type BookingStatus =

@@ -11,7 +11,7 @@ interface BookingState {
 
   bookings: Booking[];
 
-  setUser: (user: UserSession) => void;
+  setUser: (user: UserSession) => Promise<void>;
 
   addBooking: (booking: Booking) => void;
 
@@ -35,8 +35,20 @@ export const useBookingStore = create<BookingState>()(
 
       bookings: [],
 
-      setUser: (user) => {
-        set({ user });
+      setUser: async (user) => {
+        const previous = get().user;
+        try {
+          // persist wraps set and returns the AsyncStorage write promise.
+          // Profile edits preserve the identity referenced by existing bookings.
+          await set({ user: { ...user, id: previous.id } });
+        } catch (error) {
+          try {
+            await set({ user: previous });
+          } catch {
+            // Restore the in-memory profile even if storage remains unavailable.
+          }
+          throw error;
+        }
       },
 
       addBooking: (booking) => {

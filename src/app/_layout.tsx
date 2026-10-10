@@ -41,6 +41,10 @@ export default function RootLayout() {
                         'Quay lại',
                 }}
             />
+            <Stack.Screen
+                name="profile-settings"
+                options={{ title: 'Chỉnh sửa hồ sơ', headerBackTitle: 'Quay lại' }}
+            />
         </Stack>
     );
 }
